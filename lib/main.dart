@@ -21,7 +21,6 @@ final audioPlayer = AudioPlayer();
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
   WidgetsFlutterBinding.ensureInitialized();
-
   await service.configure(
     androidConfiguration: AndroidConfiguration(
       onStart: onStart,
@@ -41,40 +40,26 @@ void onStart(ServiceInstance service) {
     service.on('setAsForeground').listen((event) {
       service.setAsForegroundService();
     });
-
     service.on('setAsBackground').listen((event) {
       service.setAsBackgroundService();
     });
   }
-
   service.on('stopService').listen((event) {
     service.stopSelf();
   });
-
   if (service is AndroidServiceInstance) {
     audioPlayer.onPlayerComplete.listen((event) {
       Map<String, dynamic> dataToSend = {'count': count++};
-
       service.invoke('update', dataToSend);
-
       // debugPrint(dataToSend.toString());
-
       audioPlayer.play(UrlSource(url));
     });
     audioPlayer.play(UrlSource(url));
   }
-
-  // service.invoke(
-  //   'update',
-  //   {
-  //     "current_date": DateTime.now().toIso8601String(),
-  //   },
-  // );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -85,19 +70,12 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isRunning = true;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,18 +84,14 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () async {
           final service = FlutterBackgroundService();
           var isRunning2 = await service.isRunning();
-
           if (isRunning2) {
             service.invoke("stopService");
-
             setState(() {
-              isRunning2 = false;
               isRunning = false;
             });
           } else {
             FlutterBackgroundService().startService();
             setState(() {
-              isRunning2 = true;
               isRunning = true;
             });
           }
@@ -136,10 +110,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: CircularProgressIndicator(),
                   );
                 }
-
                 final data = snapshot.data!;
                 var device = data["count"];
-
                 String a = device.toString();
                 return Column(
                   children: [
